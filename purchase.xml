@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<tryton>
+    <data>
+        
+        <record model="ir.action.act_window" id="act_shipment_form">
+            <field name="name">Guia de remision</field>
+            <field name="res_model">stock.shipment.in</field>
+            <field name="domain">[('moves.purchase', 'in', Eval('active_ids'))]</field>
+        </record>
+        <record model="ir.action.keyword"
+                id="act_open_shipment_keyword1">
+            <field name="keyword">form_relate</field>
+            <field name="model">purchase.purchase,-1</field>
+            <field name="action" ref="act_shipment_form"/>
+        </record>
+        
+
+    </data>
+</tryton>
