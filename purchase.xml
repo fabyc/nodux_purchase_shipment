@@ -3,11 +3,11 @@
 this repository contains the full copyright notices and license terms. -->
 <tryton>
     <data>
-        
+
         <record model="ir.action.act_window" id="act_shipment_form">
             <field name="name">Guia de remision</field>
             <field name="res_model">stock.shipment.in</field>
-            <field name="domain">[('moves.purchase', 'in', Eval('active_ids'))]</field>
+            <field name="domain" eval="[('moves.purchase', 'in', 'Eval('active_ids')')]" pyson="1"/>
         </record>
         <record model="ir.action.keyword"
                 id="act_open_shipment_keyword1">
@@ -15,7 +15,7 @@ this repository contains the full copyright notices and license terms. -->
             <field name="model">purchase.purchase,-1</field>
             <field name="action" ref="act_shipment_form"/>
         </record>
-        
+
 
     </data>
 </tryton>

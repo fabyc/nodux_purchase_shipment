@@ -9,13 +9,13 @@ from functools import partial
 from itertools import groupby, chain
 
 __all__ = ['Purchase']
-__metaclass__ = PoolMeta
+
 
 class Purchase():
-    'Purchase'
+    __metaclass__ = PoolMeta
     __name__ = 'purchase.purchase'
     _rec_name = 'reference'
-    
+
     def _get_move_sale_line(self, shipment_type):
         '''
         Return move for each sale lines of the right shipment_type
@@ -26,7 +26,7 @@ class Purchase():
             if val:
                 res[line.id] = val
         return res
-        
+
     def _group_shipment_key(self, moves, move):
         '''
         The key to group moves by shipments
@@ -39,14 +39,13 @@ class Purchase():
         line = PurchaseLine(line_id)
 
         planned_date = max(m.planned_date for m in moves)
-        print "Fecha y bodega ", planned_date, line.purchase.warehouse.id
         return (
             ('planned_date', planned_date),
             ('warehouse', line.purchase.warehouse.id),
             )
-        
+
     _group_return_key = _group_shipment_key
-    
+
     def _get_shipment_purchase(self, Shipment, key):
         values = {
             'supplier': self.party.id,
@@ -54,7 +53,6 @@ class Purchase():
             'company': self.company.id,
             }
         values.update(dict(key))
-        print "Termina este metodo ", values
         return Shipment(**values)
 
 
@@ -74,17 +72,14 @@ class Purchase():
         moves = sorted(moves, key=keyfunc)
 
         shipments = []
-        print "LLega aqui ", shipments
         for key, grouped_moves in groupby(moves, key=keyfunc):
             shipment = self._get_shipment_purchase(Shipment, key)
             shipment.moves = (list(getattr(shipment, 'moves', []))
                 + [x[1] for x in grouped_moves])
             shipment.save()
             shipments.append(shipment)
-            print "LLega aqui ", shipments
         if shipment_type == 'in':
             Shipment.draft(shipments)
-        print "Llega hasta aqui ", shipments
         return shipments
 
 
@@ -93,8 +88,6 @@ class Purchase():
     def process(cls, purchases):
         process, done = [], []
         for purchase in purchases:
-            purchase.create_invoice('in_invoice')
-            purchase.create_invoice('in_credit_note')
             purchase.create_shipment('in')
             purchase.create_shipment('return')
             purchase.set_invoice_state()
