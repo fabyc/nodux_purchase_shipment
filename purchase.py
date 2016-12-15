@@ -39,7 +39,6 @@ class Purchase():
         line = PurchaseLine(line_id)
 
         planned_date = max(m.planned_date for m in moves)
-        print "Fecha y bodega ", planned_date, line.purchase.warehouse.id
         return (
             ('planned_date', planned_date),
             ('warehouse', line.purchase.warehouse.id),
@@ -54,7 +53,6 @@ class Purchase():
             'company': self.company.id,
             }
         values.update(dict(key))
-        print "Termina este metodo ", values
         return Shipment(**values)
 
 
@@ -74,17 +72,14 @@ class Purchase():
         moves = sorted(moves, key=keyfunc)
 
         shipments = []
-        print "LLega aqui ", shipments
         for key, grouped_moves in groupby(moves, key=keyfunc):
             shipment = self._get_shipment_purchase(Shipment, key)
             shipment.moves = (list(getattr(shipment, 'moves', []))
                 + [x[1] for x in grouped_moves])
             shipment.save()
             shipments.append(shipment)
-            print "LLega aqui ", shipments
         if shipment_type == 'in':
             Shipment.draft(shipments)
-        print "Llega hasta aqui ", shipments
         return shipments
 
 
