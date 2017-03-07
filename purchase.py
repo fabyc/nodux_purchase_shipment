@@ -15,7 +15,7 @@ class Purchase():
     'Purchase'
     __name__ = 'purchase.purchase'
     _rec_name = 'reference'
-    
+
     def _get_move_sale_line(self, shipment_type):
         '''
         Return move for each sale lines of the right shipment_type
@@ -26,7 +26,7 @@ class Purchase():
             if val:
                 res[line.id] = val
         return res
-        
+
     def _group_shipment_key(self, moves, move):
         '''
         The key to group moves by shipments
@@ -37,15 +37,14 @@ class Purchase():
         PurchaseLine = pool.get('purchase.line')
         line_id, move = move
         line = PurchaseLine(line_id)
-
-        planned_date = max(m.planned_date for m in moves)
+        planned_date = max(m.planned_date for m in moves if m.planned_date != None)
         return (
             ('planned_date', planned_date),
             ('warehouse', line.purchase.warehouse.id),
             )
-        
+
     _group_return_key = _group_shipment_key
-    
+
     def _get_shipment_purchase(self, Shipment, key):
         values = {
             'supplier': self.party.id,
