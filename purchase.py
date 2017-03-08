@@ -37,7 +37,7 @@ class Purchase():
         PurchaseLine = pool.get('purchase.line')
         line_id, move = move
         line = PurchaseLine(line_id)
-        planned_date = max(m.planned_date for m in moves if m.planned_date != None)
+        planned_date = max(m.planned_date for m in moves)
         return (
             ('planned_date', planned_date),
             ('warehouse', line.purchase.warehouse.id),
