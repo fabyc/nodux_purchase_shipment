@@ -21,8 +21,9 @@ class Purchase():
         Return move for each sale lines of the right shipment_type
         '''
         res = {}
+        move_type = 'in'
         for line in self.lines:
-            val = line.get_move()
+            val = line.get_move(move_type)
             if val:
                 res[line.id] = val
         return res
@@ -88,6 +89,7 @@ class Purchase():
     def process(cls, purchases):
         process, done = [], []
         for purchase in purchases:
+            purchase.create_invoice()
             purchase.create_shipment('in')
             purchase.create_shipment('return')
             purchase.set_invoice_state()
@@ -103,6 +105,4 @@ class Purchase():
         if process:
             cls.proceed(process)
         if done:
-            cls.write(done, {
-                    'state': 'done',
-                    })
+            cls.do(done)
